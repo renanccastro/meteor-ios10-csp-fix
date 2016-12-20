@@ -1,3 +1,10 @@
+function RemoveLastDirectoryPartOf(the_url)
+{
+    var the_arr = the_url.split('/');
+    the_arr.pop();
+    return( the_arr.join('/') );
+}
+
 module.exports = function(context) {
   var fs = context.requireCordovaModule('fs');
   var path = context.requireCordovaModule('path');
@@ -10,7 +17,14 @@ module.exports = function(context) {
   var config = new ConfigParser(configXml);
   var projectName = config.name();
 
-  var wwwPath = path.join(context.opts.projectRoot, 'platforms/ios/www/application/');
+  if(context.opts.projectRoot[context.opts.projectRoot.length-1] == "/")
+	  context.opts.projectRoot = RemoveLastDirectoryPartOf(context.opts.projectRoot);
+  context.opts.projectRoot = RemoveLastDirectoryPartOf(context.opts.projectRoot);
+  context.opts.projectRoot = RemoveLastDirectoryPartOf(context.opts.projectRoot);
+  context.opts.projectRoot = RemoveLastDirectoryPartOf(context.opts.projectRoot);
+  context.opts.projectRoot = RemoveLastDirectoryPartOf(context.opts.projectRoot);
+
+  var wwwPath = path.join(context.opts.projectRoot, 'build_files/ios/project/www/application/');
   var otherWwwPath = path.join(context.opts.projectRoot, 'www/application/index.html');
 
 
