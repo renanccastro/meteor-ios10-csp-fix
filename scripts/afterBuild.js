@@ -32,7 +32,13 @@ module.exports = function(context) {
 
   var oldMetaPattern = '  \<meta http-equiv="Content-Security-Policy" [^\n]*';
 
-  var data = fs.readFileSync(indexHTMLPath, {'encoding': 'utf8'});
+  var data;
+  try{
+    data = fs.readFileSync(indexHTMLPath, {'encoding': 'utf8'});
+  } catch(err){
+    console.log('NOT updating META tag for file ' + indexHTMLPath + ' REASON: NOT FOUND.');
+    return;
+  }
 
   var oldMetaRegexp = new RegExp(oldMetaPattern, 'i');
   var newmeta = `<meta http-equiv="Content-Security-Policy" content="default-src * data: blob: gap: 'unsafe-inline' 'unsafe-eval' ws: wss:;">`;
@@ -60,8 +66,8 @@ module.exports = function(context) {
     if (headregexp.test(data)) {
       // replace <head> with <head>\n<meta....>
       var newdata = data.replace(headregexp, `${headpattern}\n${newmeta}`);
-      
+
       fs.writeFileSync(indexHTMLPath, newdata);
-    } 
+    }
   }
 }
